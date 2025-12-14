@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using TodoServerApp.Components;
 using TodoServerApp.Components.Account;
 using TodoServerApp.Data;
+using TodoServerApp.Data.Interfaces;
+using TodoServerApp.Data.Services;
 
 namespace TodoServerApp
 {
@@ -14,6 +16,7 @@ namespace TodoServerApp
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+            // Добавьте сервисы в контейнер.
             builder.Services.AddRazorComponents()
                 .AddInteractiveServerComponents();
 
@@ -40,10 +43,12 @@ namespace TodoServerApp
                 .AddDefaultTokenProviders();
 
             builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
+            builder.Services.AddScoped<IDataService, MSSQLDataService>();
 
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
+            // Настройте конвейер обработки HTTP-запросов.
             if (app.Environment.IsDevelopment())
             {
                 app.UseMigrationsEndPoint();
@@ -52,6 +57,7 @@ namespace TodoServerApp
             {
                 app.UseExceptionHandler("/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+                // // Значение HSTS по умолчанию составляет 30 дней. Возможно, вам потребуется изменить это значение для производственных сценариев
                 app.UseHsts();
             }
 
@@ -64,6 +70,7 @@ namespace TodoServerApp
                 .AddInteractiveServerRenderMode();
 
             // Add additional endpoints required by the Identity /Account Razor components.
+            // Добавьте дополнительные конечные точки, необходимые для компонентов Identity/Account Razor.
             app.MapAdditionalIdentityEndpoints();
 
             app.Run();
